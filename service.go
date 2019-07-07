@@ -23,7 +23,7 @@ type service struct {
 
 //NewService 创建历史名称服务实例
 func NewService(engine *xorm.Engine) Service {
-	return &Service{
+	return &service{
 		dao: NewDao(engine),
 	}
 }

@@ -11,11 +11,27 @@ type ControllerInterface interface {
 	getModelSlice() interface{} // 这地方应该是模型数组，暂时无合理方式继承
 	SetChildren(children ControllerInterface)
 }
+//ResponseBean 返回体
+type ResponseBean struct {
+	Msg        string                 `json:"msg"`
+	Code       int                    `json:"code"`
+	Record     interface{}            `json:"record"`
+	List       interface{}            `json:"list"`
+	Params     map[string]interface{} `json:"params"`
+	Pagination *Pagination            `json:"pagination"`
+}
+
+//Pagination 分页器
+type Pagination struct {
+	Size  int `json:"size"`
+	Page  int `json:"page"`
+	Total int `json:"total"`
+}
 
 // Controller 控制器
 type Controller struct {
 	Ctx           iris.Context
-	CommonService services.CommonService
+	Service Service
 	children      ControllerInterface
 	modelInstance *ModelInstance // 此处使用指针，方便判断该属性是否为空
 }
@@ -67,7 +83,7 @@ func (instance *Controller) PostList() *ResponseBean {
 	pageSize := 20
 	orderBy := "id desc"
 	dataList := instance.getModelSlice()
-	total, _ := instance.CommonService.Page(model, dataList, where, orderBy, page, pageSize)
+	total, _ := instance.Service.Page(model, dataList, where, orderBy, page, pageSize)
 	response := &ResponseBean{
 		Msg:  "ok",
 		Code: 200,
@@ -91,7 +107,7 @@ func (instance *Controller) PostAdd() *ResponseBean {
 		return response
 	}
 
-	if _, err := instance.CommonService.Insert(model); err != nil {
+	if _, err := instance.Service.Insert(model); err != nil {
 		response.Msg = err.Error()
 		response.Code = iris.StatusInternalServerError
 		return response
@@ -113,7 +129,7 @@ func (instance *Controller) PostUpdate() *ResponseBean {
 		return response
 	}
 
-	if _, err := instance.CommonService.Update(model); err != nil {
+	if _, err := instance.Service.Update(model); err != nil {
 		response.Msg = err.Error()
 		response.Code = iris.StatusInternalServerError
 		return response
@@ -138,7 +154,7 @@ func (instance *Controller) PostDelete() *ResponseBean {
 	newModel := instance.getModel()
 	newModel.SetId(model.GetId())
 
-	if _, err := instance.CommonService.Delete(newModel); err != nil {
+	if _, err := instance.Service.Delete(newModel); err != nil {
 		response.Msg = err.Error()
 		response.Code = iris.StatusInternalServerError
 		return response

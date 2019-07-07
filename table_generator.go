@@ -12,16 +12,17 @@ type TableGenerator struct {
 }
 
 //NewTableGenerator 实例化TableGenerator
-fuc NewTableGenerator(engine *xorm.Engine,models []interface{}) (instance *TableGenerator){
-	instance.Models = models
-	instance.engine = engine
+func NewTableGenerator(engine *xorm.Engine,models []interface{}) (instance *TableGenerator){
+	instance=&TableGenerator{
+		models:models,
+		engine:engine,
+	}
 	return
-
 }
 
 // SetModel 记录model 实例数组（需要建表的model实例列表）
 func (instance *TableGenerator) SetModel(models []interface{}) {
-	instance.Models = models
+	instance.models = models
 }
 
 // SetEngine 设置mysql链接实例
