@@ -9,18 +9,34 @@ controller.go 通用基本crud 控制器
 template_goxorm_struct.go.tpl 根据表生成实现ModelInterface 接口的model类，并生成获取模型实例、列表的方法
 # 简单的使用案例
 ```
+package routes
+
 import (
 	"../../bootstrap"
-	"../../models"
-	"../../services"
-	"../controllers"
+    "../../models"
+	crud "suifengpiao14/iriscrud"
 	"github.com/kataras/iris/mvc"
 )
-// 后台v1版本接口
-	backendV1 := index.Party("/backend/v1/")
 
+// Configure 配置路由和依赖di
+func Configure(bootstrap *bootstrap.Bootstrapper) {
+	service := crud.NewService()
+
+	index := mvc.New(bootstrap.Party("/"))
+
+	index.Register(
+		service,
+	)
+
+	// 后台v1版本接口
+	backendV1 := index.Party("/backend/v1/")
 	// xml
-	backendV1.Party("/xml", models.ModelInstanceMiddle(models.NewXmlModelInstance)).Handle(new(controllers.BaseController))
+	backendV1.Party("/xml", crud.ModelInstanceMiddle(models.NewXmlModelInstance)).Handle(new(crud.Controller))
 	// tag
-	backendV1.Party("/tag", models.ModelInstanceMiddle(models.NewTagModelInstance)).Handle(new(controllers.BaseController))
+	backendV1.Party("/tag", crud.ModelInstanceMiddle(models.NewTagModelInstance)).Handle(new(crud.Controller))
+	// serverVariable
+	backendV1.Party("/server-variable", crud.ModelInstanceMiddle(models.NewServerVariableModelInstance)).Handle(new(crud.Controller))
+	// server
+	backendV1.Party("/server", crud.ModelInstanceMiddle(models.NewServerModelInstance)).Handle(new(crud.Controller))
+}
 ```
