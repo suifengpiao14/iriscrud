@@ -51,7 +51,7 @@ func (instance *Controller) EndRequest(ctx context.Context) {
 
 }
 
-// SetChildren 设置子类
+// SetChildren 设置子类(该方法子类不能覆盖)
 func (instance *Controller) SetChildren(children ControllerInterface) {
 	instance.children = children
 }
@@ -141,8 +141,8 @@ func (instance *Controller) PostUpdate() *ResponseBean {
 	return response
 }
 
-//PostDelete 修改
-func (instance *Controller) PostDelete() *ResponseBean {
+//GetDelete 修改
+func (instance *Controller) GetDelete() *ResponseBean {
 	model := instance.getModel()
 	response := &ResponseBean{}
 	if err := instance.Ctx.ReadJSON(model); err != nil {
