@@ -6,7 +6,7 @@ import(
 // Criteria where 参数，将参数转为查询条件语句
 type Criteria interface {
 	GetWhere()*Where
-	SetWhre(ctx iris.Context,fn func(ctx iris.Context)(where *Where))
+	SetWhre(ctx iris.Context,fn func(ctx iris.Context)(sql string,args *map[string]interface{}))
 	GetOrder()string
 	SetOrder(ctx iris.Context,fn func(ctx iris.Context)(order string))
 	GetPagination()*Pagination
@@ -36,8 +36,8 @@ func(instance *criteria)GetWhere()*Where{
 }
 
 //SetWhre 设置查询条件
-func (instance *criteria)SetWhre(ctx iris.Context,fn func(ctx iris.Context) (where *Where)){
-	instance.Where = fn(ctx)
+func (instance *criteria)SetWhre(ctx iris.Context,fn func(ctx iris.Context) (sql string,args *map[string]interface{})){
+	instance.Where.SQL,instance.Where.Args = fn(ctx)
 	return 
 }
 
