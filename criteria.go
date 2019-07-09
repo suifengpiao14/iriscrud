@@ -10,7 +10,7 @@ type Criteria interface {
 	GetOrder()string
 	SetOrder(ctx iris.Context,fn func(ctx iris.Context)(order string))
 	GetPagination()*Pagination
-	SetPagination(ctx iris.Context,fn func(ctx iris.Context)(pagination *Pagination))
+	SetPagination(ctx iris.Context,fn func(ctx iris.Context)(page int,size int))
 }
 
 
@@ -58,7 +58,7 @@ func(instance *criteria)GetPagination()*Pagination{
 }
 
 //SetPagination 设置分页条件
-func (instance *criteria)SetPagination(ctx iris.Context,fn func(ctx iris.Context) (pagination *Pagination)){
-	instance.Pagination = fn(ctx)
+func (instance *criteria)SetPagination(ctx iris.Context,fn func(ctx iris.Context) (page int,size int)){
+	instance.Pagination.Page,instance.Pagination.Size = fn(ctx)
 	return 
 }
