@@ -7,6 +7,7 @@ model_interface.go  系统的model必须实现ModelInterface 接口方法 (可�
 table_generator.go 根据model 生成数据库表，方便迁移
 controller.go 通用基本crud 控制器
 template_goxorm_struct.go.tpl 根据表生成实现ModelInterface 接口的model类，并生成获取模型实例、列表的方法
+criteria.go 构造sql查询条件,单独提炼成对象后方便结构化，进而考虑在openapi文档中标识后自动化
 # 简单的使用案例
 ```
 package routes

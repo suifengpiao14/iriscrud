@@ -11,22 +11,6 @@ type ControllerInterface interface {
 	getModelSlice() interface{} // 这地方应该是模型数组，暂时无合理方式继承
 	SetChildren(children ControllerInterface)
 }
-//ResponseBean 返回体
-type ResponseBean struct {
-	Msg        string                 `json:"msg"`
-	Code       int                    `json:"code"`
-	Record     interface{}            `json:"record"`
-	List       interface{}            `json:"list"`
-	Params     map[string]interface{} `json:"params"`
-	Pagination *Pagination            `json:"pagination"`
-}
-
-//Pagination 分页器
-type Pagination struct {
-	Size  int `json:"size"`
-	Page  int `json:"page"`
-	Total int `json:"total"`
-}
 
 // Controller 控制器
 type Controller struct {
@@ -76,14 +60,15 @@ func (instance *Controller) getModelSlice() interface{} {
 }
 
 //PostList post 方法获取列表
-func (instance *Controller) PostList() *ResponseBean {
+func (instance *Controller) PostList(criteria Criteria) *ResponseBean {
 	model := instance.getModel()
-	where := ""
+	where := criteria.GetWhere()
+	pagination:= criteria.GetPagination()
 	page := 1
 	pageSize := 20
-	orderBy := "id desc"
+	orderBy := criteria.GetOrder()
 	dataList := instance.getModelSlice()
-	total, _ := instance.Service.Page(model, dataList, where, orderBy, page, pageSize)
+	total, _ := instance.Service.Page(model, dataList, where.SQL, orderBy, pagination.Page, pagination.Size)
 	response := &ResponseBean{
 		Msg:  "ok",
 		Code: 200,
